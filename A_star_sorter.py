@@ -1,63 +1,62 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Feb  7 11:51:32 2020
-
-@author: William
-"""
 import numpy as np
 import random
 
 #value of every position of the grid
-#def position(dot):
-#    x = dot[:,1]
-#    pos = 0
-#    if(x==1):
-#        pos = y
-#    elif(x==2):
-#        pos = 3+y
-#    else:
-#        pos = 6+y
-#    return pos
+def position(x,y):
+    if(x==1):
+        pos = y
+    elif(x==2):
+        pos = 3+y
+    else:
+        pos = 6+y
+    return pos
 #available moves from empty
 def movs(grid,empty):
-    [x,y] = empty.index()
-    movs = []
-    if(x + 1 < 4):
+    moves = []
+    x = empty[0]
+    y = empty[1]
+    print(x)
+    print(y)
+    if(x + 1 < 3):
         aftGrid = mov(grid,[x+1 , y],empty)
-        movs.append(aftGrid)
+        moves.append(aftGrid)
     if(x - 1 > 0):
         aftGrid = mov(grid,[x-1 , y],empty)
-        movs.append(aftGrid)
-    if(y + 1 < 4):
+        moves.append(aftGrid)
+    if(y + 1 < 3):
         aftGrid = mov(grid,[x , y+1],empty)
-        movs.append(aftGrid)                    
+        moves.append(aftGrid)                    
     if(y - 1 > 0):
         aftGrid = mov(grid,[x , y-1],empty)
-        movs.append(aftGrid)
-    return movs
+        moves.append(aftGrid)
+    return moves
 
 # moves
 def mov(grid,pos,empty):
-    tempEmp = grid[empty]
-    grid[empty] = grid[pos]
-    grid[pos] = tempEmp
+    x = int(empty[0])
+    y = int(empty[1]) 
+    tempEmp = grid[x,y]
+    grid[x,y] = grid[int(pos[0]),int(pos[1])]
+    grid[int(pos[0]),int(pos[1])] = tempEmp
     return grid
 
 #heuristic for distance between neighbors dots
 def heurDist(grid):
     distAcum = 0
-    for i in range (1,4):
-        for j in range (1,4):
-            distAcum = distAcum + abs(position([i,j]) - grid[i,j])
+    for i in range (0,3):
+        for j in range (0,3):
+            distAcum = distAcum + abs(position(i,j) - grid[i,j])
             if ( i ==1 and j ==1):
                 if (grid[i,j] != 1):
                     distAcum = distAcum + 3
+    return distAcum
         
 def calcG(current,neighbor):
     distAcum = 0
-    for i in range (1,4):
-        for j in range (1,4):
+    for i in range (0,3):
+        for j in range (0,3):
             distAcum = distAcum + abs(current[i,j] - neighbor[i,j])
+    return distAcum
 
 #Distance between the actual position of a point and the correct position of it
 #def heurRealDist(grid,cPos,pos):
@@ -72,7 +71,8 @@ def calcG(current,neighbor):
 
 def heurMinLevel(grid):
     val = 0
-    correctPosition = []    
+    correctPosition = []   
+    print('algo')
     for j in range(0,3):
         for i in range (0,3):
             val = val+1
@@ -92,10 +92,18 @@ def calcWeight(dotArray):
     return weight
             
 def returnEmpty(grid):
+    x = 14
+    y = 14
     for i in range(0,3):
         for j in range(0,3):
             if(grid[i,j] == 0):
-                return [i,j]
+                x = i
+                y = j
+                break
+    empty = np.zeros((2))
+    empty[0] = int(x)
+    empty[1] = int(y)
+    return empty
 
 def lowestF(openSet):
     lowestFs = 99999
@@ -133,7 +141,7 @@ def a_Star(grid,gridFinal):
     #first position of empty spot
     empty = returnEmpty(grid)
     openSet.append(movs(grid,empty))
-    while len(openSet != 0):
+    while (len(openSet) != 0):
         current = lowestF(openSet)
         if current == gridFinal:
             return cameFrom
@@ -167,11 +175,13 @@ count = 0
 for i in range (0,3):
     for j in range (0,3):
         if count < 8:
-            grid[i,j] = count + 1
+            count = count + 1
+            grid[i,j] = count 
         else:
             grid[i,j] = 0
 gridFinal = grid
-random.shuffle(grid)
+np.random.shuffle(grid)
+print(grid)
 path = a_Star(grid,gridFinal)
 if(len(path) != 0):
-    print('Hizo algo')    
+    print('Hizo algo') 
