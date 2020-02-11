@@ -12,32 +12,49 @@ def position(x,y):
     return pos
 #available moves from empty
 def movs(grid,empty):
+    counter = 0
     moves = []
     x = empty[0]
     y = empty[1]
-    print(x)
-    print(y)
+    up = []
+    do = []
+    le = []
+    ri = []
     if(x + 1 < 3):
-        aftGrid = mov(grid,[x+1 , y],empty)
-        moves.append(aftGrid)
+        gridD = grid.copy()
+        up.append(mov(gridD,[x+1 , y],empty))
+        counter = counter + 1
     if(x - 1 > 0):
-        aftGrid = mov(grid,[x-1 , y],empty)
-        moves.append(aftGrid)
+        gridU = grid.copy()
+        do.append(mov(gridU,[x-1 , y],empty))
+        counter = counter + 1
     if(y + 1 < 3):
-        aftGrid = mov(grid,[x , y+1],empty)
-        moves.append(aftGrid)                    
+        gridL = grid.copy()
+        le.append(mov(gridL,[x , y+1],empty))
+        counter = counter + 1                    
     if(y - 1 > 0):
-        aftGrid = mov(grid,[x , y-1],empty)
-        moves.append(aftGrid)
+        gridR = grid.copy()
+        ri.append(mov(gridR,[x , y-1],empty))
+        counter = counter + 1
+    if(len(up)!=0):
+      moves.append(up)
+    if(len(do)!=0):
+      moves.append(do)
+    if(len(le)!=0):
+      moves.append(le)
+    if(len(ri)!=0):
+      moves.append(ri)
     return moves
 
 # moves
 def mov(grid,pos,empty):
     x = int(empty[0])
-    y = int(empty[1]) 
+    y = int(empty[1])
+    posX = int(pos[0])
+    posY = int(pos[1])
     tempEmp = grid[x,y]
     grid[x,y] = grid[int(pos[0]),int(pos[1])]
-    grid[int(pos[0]),int(pos[1])] = tempEmp
+    grid[posX,posY] = tempEmp
     return grid
 
 #heuristic for distance between neighbors dots
@@ -72,12 +89,12 @@ def calcG(current,neighbor):
 def heurMinLevel(grid):
     val = 0
     correctPosition = []   
-    print('algo')
-    for j in range(0,3):
-        for i in range (0,3):
-            val = val+1
-            if (grid[i,j] == val):
-                correctPosition.append(grid[i,j])
+    for i in grid:
+        for j in i:
+          val = val + 1
+          temp = int(j)
+          if (temp == val):
+            correctPosition.append(val)
     correctPositionWeight = calcWeight(correctPosition)
     return correctPositionWeight
     
@@ -107,8 +124,12 @@ def returnEmpty(grid):
 
 def lowestF(openSet):
     lowestFs = 99999
-    for grid in openSet:
-        gridF = 0.8*(heurMinLevel(grid)) + 0.2*(heurDist(grid)) 
+    length = len(openSet)
+    while len(openSet)!=0
+        print('---------')
+        print (grid[i])
+        print('---------')
+        gridF = 0.8*(heurMinLevel(grid[i])) + 0.2*(heurDist(grid[i])) 
         if (lowestFs > gridF):
             lowestFs = gridF
             lGrid = grid
@@ -135,8 +156,9 @@ def a_Star(grid,gridFinal):
     gScore.insert(gScoreIndex,0)
     #fScoreIndex necesary for track the path
     fScoreIndex = 0
-    fScore = []
+    fScore = []    
     fScore.insert(fScoreIndex,0.8*(heurMinLevel(grid)) + 0.2*(heurDist(grid))) 
+
 
     #first position of empty spot
     empty = returnEmpty(grid)
@@ -149,7 +171,7 @@ def a_Star(grid,gridFinal):
         neighbors = []
         neighbors = movs(current,returnEmpty(grid))
         gScoreIndex = gScoreIndex + 1
-        gScore[gScoreIndex] = gScore[gScoreIndex - 1] + calcG(cameFrom[cameFromIndex],current) 
+        gScore.insert(gScoreIndex,gScore[gScoreIndex - 1] + calcG(cameFrom[cameFromIndex],current))  
         cameFromIndex = cameFromIndex + 1
         openSet.remove(current)
         minNextPath = 999999
@@ -157,9 +179,9 @@ def a_Star(grid,gridFinal):
             tempgScore = gScore[gScoreIndex] + calcG(current,move)
             if minNextPath > tempgScore :
                 minNextPath = tempgScore
-                cameFrom[cameFromIndex+1] = current
-                gScore[gScoreIndex+1] = tempgScore
-                fScore[fScoreIndex+1] = gScore[gScoreIndex+1]  + 0.8*(heurMinLevel(grid)) + 0.2*(heurDist(grid))
+                cameFrom.insert(cameFromIndex+1,current)
+                gScore.insert(gScoreIndex+1,tempgScore)
+                fScore.insert(fScoreIndex+1), gScore[gScoreIndex+1]  + 0.8*(heurMinLevel(grid)) + 0.2*(heurDist(grid))
                 tempNext = move
         for item in openSet:
             if (item == tempNext):
@@ -181,7 +203,6 @@ for i in range (0,3):
             grid[i,j] = 0
 gridFinal = grid
 np.random.shuffle(grid)
-print(grid)
 path = a_Star(grid,gridFinal)
 if(len(path) != 0):
     print('Hizo algo') 
