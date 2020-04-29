@@ -1,1 +1,2 @@
 # Slider_Solver
+This project has two parts, the first one takes an unordered image 300 * 300 which will divide it into nine equal parts and find the correct order of it. After that division, the algorithm will randomly create solvable cases with the ordered image of the sliding block puzzle  3 * 3.  The second part of the project will take the solvable case of the puzzle and will solve it using A* algorithm. 
